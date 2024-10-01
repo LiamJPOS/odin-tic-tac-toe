@@ -15,12 +15,45 @@ function Cell() {
 }
 
 function Gameboard() {
-    const boardSize = 9;
+    const rows = 3;
+    const cols = 3;
+    const board = [];
 
+    for(let i = 0; i < rows; i++){
+        board.push([])
+        for(let j = 0; j < cols; j++){
+            board[i].push(Cell())
+        }
+    }
+
+    function printBoard() {
+        let rowValues = []
+        console.group("Tic Tac Toe Board");
+        for(let row of board) {
+            for(cell of row) {
+                rowValues.push(cell.getValue())
+            }
+            console.log(rowValues.join("|"));
+            rowValues = []    
+        }
+        console.groupEnd();
+        console.log("\n"); //Seperate boards on multiple calls
+    }
+    
+    return {
+        printBoard
+    }
 }
 
-const board = []
-boardSize = 9;
-for(let i = 0; i < boardSize; i++){
-    board.push(Cell())
-}
+
+    
+let game = Gameboard()
+game.printBoard();
+
+
+
+
+
+
+
+
