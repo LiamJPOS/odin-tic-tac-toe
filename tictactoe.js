@@ -26,7 +26,7 @@ function Gameboard() {
         }
     }
 
-    function printBoard() {
+    const printBoard = function() {
         let rowValues = []
         console.group("Tic Tac Toe Board");
         for(let row of board) {
@@ -45,15 +45,42 @@ function Gameboard() {
     }
 }
 
+function Player() {
+    let token = ''
 
+    const assignToken = (choice) => token = choice;
+
+    const chooseToken = function() {
+        let choice = ''
+        while(choice !== "X" && choice !== "O"){
+            choice = prompt("Player 1, choose X or O");
+        }
+        return choice;
+    }
     
-let game = Gameboard()
-game.printBoard();
+    const getToken = () => token;
 
+    return {
+        getToken,
+        assignToken,
+        chooseToken
+    };
+}
 
+function Gamecontroller() {
+    const board = Gameboard();
+    board.printBoard()
 
+    const player1 = Player()
+    const player2 = Player()
 
+    player1.assignToken(player1.chooseToken());
+    player2.assignToken(player1.getToken() === "X" ? "O" : "X");
 
+    console.log(`Player 1 has been assigned ${player1.getToken()}. Player 2 has been assigned ${player2.getToken()}.`)
+}
+
+let game = Gamecontroller();
 
 
 
