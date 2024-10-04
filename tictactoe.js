@@ -1,5 +1,5 @@
 function Cell() {
-    let cellValue = '0'
+    let cellValue = 0
     const getValue = () => cellValue;
     //Value is either X or O representing either player's symbol, or 0 for empty cell
     const setValue = (value) => {
@@ -78,8 +78,7 @@ function Player(name) {
 
     const makeMove = function() {
         move = prompt(`${name} Make your move. Choose row and then column. Like 0,2 for middle right.`).split(",");
-        console.log(move);
-        return move;
+        return move.map(Number);
     }
 
     return {
@@ -103,24 +102,29 @@ function Gamecontroller() {
 
     console.log(`Player 1 has been assigned ${player1.getToken()}. Player 2 has been assigned ${player2.getToken()}.`)
 
-    let activePlayerIndex = 0
     const toggleActivePlayer = () => {activePlayerIndex = (activePlayerIndex + 1) % 2} 
-
-    let nextMove = []
-    let activePlayerToken = players[activePlayerIndex].getToken();
-
+    
+    let activePlayerIndex = 0
+        
     //TODO Develop game logic and win conditions to break loop here
     while(true) {
-        nextMove = players[activePlayerIndex].makeMove();
-        //TODO implement validate move and loop back if cell taken already
+        let nextMove = null;
+        let activePlayerToken = players[activePlayerIndex].getToken();
+        
+        while(true){
+            nextMove = players[activePlayerIndex].makeMove();
+            if(board.validateMove(nextMove)) {
+                break;
+            }
+            else {
+                console.log("Invalid move. The cell is already taken, try again.")
+            }
+        }
+
         board.updateBoard(nextMove, activePlayerToken);
         board.printBoard();
         toggleActivePlayer();
-        activePlayerToken = players[activePlayerIndex].getToken();
     }
 }
 
 let game = Gamecontroller();
-
-
-
