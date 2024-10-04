@@ -26,6 +26,7 @@ function Gameboard() {
         }
     }
 
+
     const printBoard = function() {
         let rowValues = []
         console.group("Tic Tac Toe Board");
@@ -52,7 +53,6 @@ function Gameboard() {
         return board[row][col].getValue() === 0;
     }
 
-    
     return {
         printBoard,
         updateBoard,
@@ -61,8 +61,14 @@ function Gameboard() {
 }
 
 function Player(name) {
+    let token = '';
 
-    let token = ''
+    // Counters for player's progress on rows, columns, and diagonals
+    const rowCounters = [0, 0, 0];
+    const colCounters = [0, 0, 0];
+    const diagCounters = [0, 0];  // diagCounters[0] = top-left to bottom-right, diagCounters[1] = top-right to bottom-left
+
+    const getName = () => name;
 
     const assignToken = (choice) => token = choice;
 
@@ -77,15 +83,42 @@ function Player(name) {
     const getToken = () => token;
 
     const makeMove = function() {
-        move = prompt(`${name} Make your move. Choose row and then column. Like 0,2 for middle right.`).split(",");
-        return move.map(Number);
+        let move = prompt(`${name} Make your move. Choose row and then column. Like 0,2 for middle right.`).split(",");
+        move = move.map(Number); //Convert string input from prompt into numbers
+        return move;
+    }
+
+    const updateCounters = (move) => {
+        const row = move[0];
+        const col = move[1];
+
+        rowCounters[row]++
+        colCounters[col]++
+
+        //Check for diagonal line and update counters if needed
+        if (row === col) {
+            diagCounters[0]++;
+        }
+
+        if (row + col === 2) {
+            diagCounters[1]++;
+        }
+    }
+
+    const winCheck = (move) => {
+        const row = move[0];
+        const col = move[1];
+        return rowCounters[row] === 3 || colCounters[col] === 3 || diagCounters[0] === 3 || diagCounters[1] === 3;
     }
 
     return {
+        getName,
         getToken,
         assignToken,
         chooseToken,
-        makeMove
+        makeMove,
+        updateCounters,
+        winCheck
     };
 }
 
@@ -105,8 +138,9 @@ function Gamecontroller() {
     const toggleActivePlayer = () => {activePlayerIndex = (activePlayerIndex + 1) % 2} 
     
     let activePlayerIndex = 0
-        
-    //TODO Develop game logic and win conditions to break loop here
+    let moveCounter = 0
+    
+    //Game loop
     while(true) {
         let nextMove = null;
         let activePlayerToken = players[activePlayerIndex].getToken();
@@ -123,8 +157,25 @@ function Gamecontroller() {
 
         board.updateBoard(nextMove, activePlayerToken);
         board.printBoard();
+        players[activePlayerIndex].updateCounters(nextMove);
+        moveCounter++
+
+        //Check win
+        if (moveCounter >= 5) {
+            if(players[activePlayerIndex].winCheck(nextMove)){
+                console.log(`${players[activePlayerIndex].getName()} is the winner!`)
+                break;
+            }
+            else if (moveCounter >= 9) {
+                console.log("It's a draw")
+                break;
+            }
+        }
+
+        //Next move
         toggleActivePlayer();
     }
+
 }
 
 let game = Gamecontroller();
