@@ -7,7 +7,7 @@ function Cell() {
             cellValue = value; 
         }
     }
-
+    
     return { 
         getValue,
         setValue
@@ -18,7 +18,7 @@ function Gameboard() {
     const rows = 3;
     const cols = 3;
     const board = [];
-
+    
     for(let i = 0; i < rows; i++){
         board.push([])
         for(let j = 0; j < cols; j++){
@@ -26,6 +26,10 @@ function Gameboard() {
         }
     }
 
+    const getRowCount = () => rows
+
+    const getColCount = () => cols
+    
     const printBoard = function() {
         let rowValues = []
         console.group("Tic Tac Toe Board");
@@ -51,24 +55,14 @@ function Gameboard() {
         const col = move[1];
         return board[row][col].getValue() === 0;
     }
-
-    const generateBoardTemplate = () => {
-        let boardTemplate = [];
-        for(let i = 0; i < rows; i++){
-            boardTemplate.push([]);
-            for(let j = 0; j < cols; j++){
-                boardTemplate[i].push(null);
-            } 
-        }
-        return boardTemplate;
-    }
     
 
     return {
         printBoard,
         updateBoard,
         validateMove,
-        generateBoardTemplate
+        getRowCount,
+        getColCount,
     }
 }
 
@@ -135,11 +129,28 @@ function Player(name) {
 }
 
 function UIConroller() {
-    gameContainer = document.getElementById("game-container");
-
-    const createGrid = function(boardTemplate) {
+    
+    const createGrid = function(rows, cols) {
+        gameContainer = document.getElementById("game-container");
         
+        for(let i = 0; i < rows; i++){
+            const rowDiv = document.createElement("div");
+            rowDiv.classList.add('row-div');
 
+            for(let j = 0; j < cols; j++){
+                const cellBtn = document.createElement("button");
+                cellBtn.classList.add("cell");
+                cellBtn.id = `cell-${i}-${j}`;
+                
+                rowDiv.appendChild(cellBtn);
+            }
+        gameContainer.appendChild(rowDiv);
+        }
+                         
+    }
+
+    return {
+        createGrid
     }
 } 
 
@@ -200,5 +211,6 @@ function Gamecontroller() {
 }
 
 // let game = Gamecontroller();
-let board = Gameboard()
+let board = Gameboard();
+let ui = UIConroller();
 

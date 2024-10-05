@@ -8,4 +8,14 @@ body {
     width: 750px;
     height: 750px;
     border: black 2px solid;
+    display: grid;
+}
+
+.row-div {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+}
+
+.cell {
+    border: black solid 1px;
 }
