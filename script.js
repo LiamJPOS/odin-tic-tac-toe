@@ -134,6 +134,15 @@ function Player(name) {
     };
 }
 
+function UIConroller() {
+    gameContainer = document.getElementById("game-container");
+
+    const createGrid = function(boardTemplate) {
+        
+
+    }
+} 
+
 function Gamecontroller() {
     const board = Gameboard();
     board.printBoard()
@@ -190,4 +199,6 @@ function Gamecontroller() {
 
 }
 
-let game = Gamecontroller();
+// let game = Gamecontroller();
+let board = Gameboard()
+
