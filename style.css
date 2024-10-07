@@ -1,13 +1,29 @@
+:root {
+    --background-color: #f5f5f5;    /* Light gray background */
+    --primary-color: #1f78b4;       /* A cool blue for primary actions (like player X) */
+    --secondary-color: #33a02c;     /* A green for secondary actions (like player O) */
+    --accent-color: #ffb703;        /* A warm yellow for highlights or notifications */
+    --text-color: #333333;          /* Dark gray for main text */
+    --border-color: #dcdcdc;        /* Light border for grid lines */
+    --cell-hover-color: #e0e0e0;    /* Slightly darker hover effect for cells */
+    --message-color: #ffffff;       /* Color for the messages or status text */
+    --win-color: #fb5607;           /* Color to highlight a winning row/column/diagonal */
+}
+
 body {
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: var(--background-color);
 }
 
 .game-container {
     width: 750px;
     height: 750px;
-    border: black 2px solid;
+    border-style: solid;
+    border-width: 3px;
+    border-color: var(--border-color);
     display: grid;
 }
 
@@ -17,5 +33,11 @@ body {
 }
 
 .cell {
-    border: black solid 1px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--border-color);
+}
+
+.cell:hover {
+    background-color: var(--cell-hover-color);
 }

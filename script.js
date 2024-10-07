@@ -129,10 +129,9 @@ function Player(name) {
 }
 
 function UIConroller() {
+    gameContainer = document.getElementById("game-container");
     
     const createGrid = function(rows, cols) {
-        gameContainer = document.getElementById("game-container");
-        
         for(let i = 0; i < rows; i++){
             const rowDiv = document.createElement("div");
             rowDiv.classList.add('row-div');
@@ -145,9 +144,11 @@ function UIConroller() {
                 rowDiv.appendChild(cellBtn);
             }
         gameContainer.appendChild(rowDiv);
-        }
-                         
+        }            
     }
+
+    //Returns cell id as string
+    const onCellClick = (cell) => cell.id
 
     return {
         createGrid
@@ -213,4 +214,7 @@ function Gamecontroller() {
 // let game = Gamecontroller();
 let board = Gameboard();
 let ui = UIConroller();
+let rows = board.getRowCount();
+let cols = board.getColCount();
+ui.createGrid(rows, cols);
 
