@@ -66,13 +66,17 @@ function Gameboard() {
     }
 }
 
-function Player(name) {
+function Player() {
+    
+    let name = '';
     let token = '';
 
     // Counters for player's progress on rows, columns, and diagonals
     const rowCounters = [0, 0, 0];
     const colCounters = [0, 0, 0];
     const diagCounters = [0, 0];  // diagCounters[0] = top-left to bottom-right, diagCounters[1] = top-right to bottom-left
+
+    const setName = (input) => name = input; 
 
     const getName = () => name;
 
@@ -118,6 +122,7 @@ function Player(name) {
     }
 
     return {
+        setName,
         getName,
         getToken,
         assignToken,
@@ -129,9 +134,12 @@ function Player(name) {
 }
 
 function UIConroller() {
-    gameContainer = document.getElementById("game-container");
+    const setNameBlock = document.getElementById("set-name-block");
+    const p1Info = document.getElementById("p1-info");
+    const p2Info = document.getElementById("p2-info");
+    const gameContainer = document.getElementById("game-container");
     
-    const createGrid = function(rows, cols) {
+    const createBoardGrid = function(rows, cols) {
         for(let i = 0; i < rows; i++){
             const rowDiv = document.createElement("div");
             rowDiv.classList.add('row-div');
@@ -147,74 +155,112 @@ function UIConroller() {
         }            
     }
 
-    //Returns cell id as string
-    const onCellClick = (cell) => cell.id
+    //Open a dialog
+    const openModal = function (dialog) {
+        dialog.showModal();
+    }
+
+    //Handle when user clicks outside of a dialog to close it
+    const handleOutsideClick = function(event, dialog) {
+        const dialogDimensions = dialog.getBoundingClientRect();
+        if (
+            event.clientX < dialogDimensions.left ||
+            event.clientX > dialogDimensions.right ||
+            event.clientY < dialogDimensions.top ||
+            event.clientY > dialogDimensions.bottom
+        ) {
+            dialog.close()
+        } 
+    }
+
+    const handleNameFormSubmit = function(event, dialog, player1, player2) {
+        event.preventDefault();
+
+        const p1NameInput = document.getElementById("p1-name-input");
+        const p2NameInput = document.getElementById("p2-name-input");
+
+        const p1Name = p1NameInput.value
+        const p2Name = p2NameInput.value
+
+        if(p1Name && p2Name) {
+            //If both values present when submitted, set both player names
+            player1.setName(p1Name);
+            player2.setName(p2Name);
+
+            //Log for testing purposes
+            console.log(`Player 1: ${player1.getName()}, Player 2: ${player2.getName()}`)
+
+            //Hide set-name-block in aside
+            setNameBlock.style.display = "none";
+
+            //Show player info in aside
+            p1Info.style.display = "block";
+            p2Info.style.display = "block";
+
+            //Close name dialog
+            dialog.close()
+        }
+
+    }
+
+    const setUpNameModal = function(player1, player2) {
+        const nameDialog = document.getElementById("name-dialog");
+        const setNameBtn = document.getElementById("set-name-btn");
+        const nameForm = document.getElementById("name-form");
+
+        // Add event listener to button that opens modal
+        setNameBtn.addEventListener("click", () => openModal(nameDialog));
+
+        //Add event listener for closing module when clicking outside it
+        nameDialog.addEventListener("click", (event => handleOutsideClick(event, nameDialog)))
+
+        // Add event listener to handle form submission
+        nameForm.addEventListener("submit" , (event) => handleNameFormSubmit(event, nameDialog, player1, player2))
+
+        //Open the name dialog by default
+        nameDialog.showModal();
+    }
 
     return {
-        createGrid
+        createBoardGrid,
+        setUpNameModal
     }
 } 
 
-function Gamecontroller() {
-    const board = Gameboard();
-    board.printBoard()
+function gameController() {
+    const toggleActivePlayer = () => {activePlayerIndex = (activePlayerIndex + 1) % 2} 
 
-    const player1 = Player("Test 1")
-    const player2 = Player("Test 2")
+    //Initialise gameboard and UI
+    const board = Gameboard();
+    const ui = UIConroller();
+
+    //Create UI grid
+    const rows = board.getRowCount();
+    const cols = board.getColCount();
+    ui.createBoardGrid(rows, cols);
+
+    // Initialise players
+    const player1 = Player();
+    const player2 = Player();
     const players = [player1, player2];
 
-    player1.assignToken(player1.chooseToken());
-    player2.assignToken(player1.getToken() === "X" ? "O" : "X");
-
-    console.log(`Player 1 has been assigned ${player1.getToken()}. Player 2 has been assigned ${player2.getToken()}.`)
-
-    const toggleActivePlayer = () => {activePlayerIndex = (activePlayerIndex + 1) % 2} 
+    //set up name modal, modal logic and show it
+    ui.setUpNameModal(player1, player2); 
     
-    let activePlayerIndex = 0
-    let moveCounter = 0
-    
-    //Game loop
-    while(true) {
-        let nextMove = null;
-        let activePlayerToken = players[activePlayerIndex].getToken();
-        
-        while(true){
-            nextMove = players[activePlayerIndex].makeMove();
-            if(board.validateMove(nextMove)) {
-                break;
-            }
-            else {
-                console.log("Invalid move. The cell is already taken, try again.")
-            }
-        }
-
-        board.updateBoard(nextMove, activePlayerToken);
-        board.printBoard();
-        players[activePlayerIndex].updateCounters(nextMove);
-        moveCounter++
-
-        //Check win
-        if (moveCounter >= 5) {
-            if(players[activePlayerIndex].winCheck(nextMove)){
-                console.log(`${players[activePlayerIndex].getName()} is the winner!`)
-                break;
-            }
-            else if (moveCounter >= 9) {
-                console.log("It's a draw")
-                break;
-            }
-        }
-
-        //Next move
-        toggleActivePlayer();
-    }
-
+    //TODO set player names when user submits them
+    //Then hide set-name-block in DOM
+    //Show p1-info and p2-info in DOM
+    //Show token modal
 }
+    // player1.assignToken('X');
+    // player2.assignToken(player1.getToken() === "X" ? "O" : "X");
 
-// let game = Gamecontroller();
-let board = Gameboard();
-let ui = UIConroller();
-let rows = board.getRowCount();
-let cols = board.getColCount();
-ui.createGrid(rows, cols);
+    // console.log(`Player 1 has been assigned ${player1.getToken()}. Player 2 has been assigned ${player2.getToken()}.`)
+
+    
+    // let activePlayerIndex = 0
+    // let moveCounter = 0
+    
+gameController();
+
 
