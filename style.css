@@ -8,17 +8,46 @@
     --cell-hover-color: #e0e0e0;    /* Slightly darker hover effect for cells */
     --message-color: #ffffff;       /* Color for the messages or status text */
     --win-color: #fb5607;           /* Color to highlight a winning row/column/diagonal */
+    --header-background-color: #4682B4; /* Bold blue for the header */
+    --header-text-color: #ffffff; /* White text for contrast */
+    --accent-color: #f5a623; /* Optional accent color */
 }
 
 body {
     height: 100vh;
+    margin: 0;
+    background-color: var(--background-color);
+    display: grid;
+    grid-template-areas: 
+        "header header header"
+        "aside main main";
+}
+
+header {
+    grid-area: header;
+    margin: 0;
+    padding: 1rem;
+    margin-bottom: 3rem;
+    background-color: var(--header-background-color);
+}
+
+aside {
+    grid-area: aside;
+    padding: 1rem;
+}
+
+.p1-info, .p2-info {
+    display: none;
+}
+
+main {
+    grid-area: main;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--background-color);
 }
 
-.game-container {
+.main__game-container {
     width: 750px;
     height: 750px;
     border-style: solid;
