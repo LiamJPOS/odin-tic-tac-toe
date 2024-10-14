@@ -72,6 +72,7 @@ body {
 }
 
 header {
+    padding: 20px;
 }
 
 main {
@@ -85,18 +86,36 @@ main {
 
 .grid {
     width: 100%;
-    max-width: 600px;
+    max-width: 500px;
     aspect-ratio: 1 / 1;
     border-collapse: collapse;
+    border: none;
 }
 
-td {
-    padding: 10px;
-    border: solid;
-    text-align: center;
+.grid td {
+    border: 10px solid;
+    padding: 0;
+    height: calc(100% / 3);
+    width: calc(100% / 3);
 }
 
+.grid tr:first-child td {
+    border-top: none;
+  }
+  
+  .grid tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .grid tr td:first-child {
+    border-left: none;
+  }
+  
+  .grid tr td:last-child {
+    border-right: none;
+  }
 footer {
+    padding: 20px;
 }
 
 
