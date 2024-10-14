@@ -137,6 +137,8 @@ function UIConroller() {
     const setNameBlock = document.getElementById("set-name-block");
     const p1Info = document.getElementById("p1-info");
     const p2Info = document.getElementById("p2-info");
+    const p1DisplayName = document.getElementById("p1-display-name");
+    const p2DisplayName = document.getElementById("p2-display-name");
     const gameContainer = document.getElementById("game-container");
     
     const createBoardGrid = function(rows, cols) {
@@ -196,6 +198,10 @@ function UIConroller() {
             //Show player info in aside
             p1Info.style.display = "block";
             p2Info.style.display = "block";
+            
+            //Set display names
+            p1DisplayName.textContent = player1.getName();
+            p2DisplayName.textContent = player2.getName();
 
             //Close name dialog
             dialog.close()
@@ -221,9 +227,16 @@ function UIConroller() {
         nameDialog.showModal();
     }
 
+    const setUpTokenModal = function(player1, player2) {
+        const tokenDialog = document.getElementById("token-dialog");
+
+        //Open the token dialog by default
+    }
+
     return {
         createBoardGrid,
-        setUpNameModal
+        setUpNameModal,
+        setUpTokenModal
     }
 } 
 
@@ -244,13 +257,6 @@ function gameController() {
     const player2 = Player();
     const players = [player1, player2];
 
-    //set up name modal, modal logic and show it
-    ui.setUpNameModal(player1, player2); 
-    
-    //TODO set player names when user submits them
-    //Then hide set-name-block in DOM
-    //Show p1-info and p2-info in DOM
-    //Show token modal
 }
     // player1.assignToken('X');
     // player2.assignToken(player1.getToken() === "X" ? "O" : "X");

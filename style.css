@@ -1,72 +1,16 @@
 :root {
-    --background-color: #f5f5f5;    /* Light gray background */
-    --primary-color: #1f78b4;       /* A cool blue for primary actions (like player X) */
-    --secondary-color: #33a02c;     /* A green for secondary actions (like player O) */
-    --accent-color: #ffb703;        /* A warm yellow for highlights or notifications */
-    --text-color: #333333;          /* Dark gray for main text */
-    --border-color: #dcdcdc;        /* Light border for grid lines */
-    --cell-hover-color: #e0e0e0;    /* Slightly darker hover effect for cells */
-    --message-color: #ffffff;       /* Color for the messages or status text */
-    --win-color: #fb5607;           /* Color to highlight a winning row/column/diagonal */
-    --header-background-color: #4682B4; /* Bold blue for the header */
-    --header-text-color: #ffffff; /* White text for contrast */
-    --accent-color: #f5a623; /* Optional accent color */
-}
+    --background-color: #1e1e2f; /* Dark background */
+    --text-color: #a0a0b2; /* Grey text */
+    --secondary-color: #f5f5f5; /* White text */
+    --accent-color:  #24aa96; /* Aquaish accent */
+  }
 
-body {
-    height: 100vh;
-    margin: 0;
+.dark-background {
     background-color: var(--background-color);
-    display: grid;
-    grid-template-areas: 
-        "header header header"
-        "aside main main";
+    color: var(--text-color);
 }
 
-header {
-    grid-area: header;
-    margin: 0;
-    padding: 1rem;
-    margin-bottom: 3rem;
-    background-color: var(--header-background-color);
-}
-
-aside {
-    grid-area: aside;
-    padding: 1rem;
-}
-
-.p1-info, .p2-info {
-    display: none;
-}
-
-main {
-    grid-area: main;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.main__game-container {
-    width: 750px;
-    height: 750px;
-    border-style: solid;
-    border-width: 3px;
-    border-color: var(--border-color);
-    display: grid;
-}
-
-.row-div {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-}
-
-.cell {
-    border-style: solid;
-    border-width: 2px;
-    border-color: var(--border-color);
-}
-
-.cell:hover {
-    background-color: var(--cell-hover-color);
+.aqua-background {
+    background: var(--accent-color);
+    color: var(--text-color);
 }
