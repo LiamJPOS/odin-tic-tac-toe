@@ -10,23 +10,26 @@
 <body>
     <header class="primary-background">
         <div class="players">
-            <button class="players__x player player-active primary-background" id ="x-player-score">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="x-token">
-                    <path d="M9,7L11,12L9,17H11L12,14.5L13,17H15L13,12L15,7H13L12,9.5L11,7H9Z" />
-                </svg>
-                <p>-</p>
-            </button>
-            <button class="players__o player player-inactive primary-background" id ="o-player-score">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="o-token">
-                    <path d="M11,7A2,2 0 0,0 9,9V15A2,2 0 0,0 11,17H13A2,2 0 0,0 15,15V9A2,2 0 0,0 13,7H11M11,9H13V15H11V9Z" />
-                </svg>
-                <p>-</p>
-            </button>
+            <player-block>
+                <p class="player-block__player-label">Player 1</p>
+                <button class="player-block__p1-btn player-btn player-active primary-background" id ="x-player-score">
+                    <div class="player-block__token-svg" id="p1-token-svg"></div>
+                    <p id="p2-score">-</p>
+                </button>
+            </player-block>
+            
+            <div class="player-block">
+                <p class="player-block__player-label">Player 2</p>
+                <button class="player-block__p2-btn player-btn player-inactive primary-background" id ="o-player-score">
+                    <div class="player-block__token-svg" id="p2-token-svg"></div>
+                    <p id="p2-score">-</p>
+                </button>
+            </div>
         </div>
         <p class="turn-tracker" id="turn-tracker">Start game or select player</p>
     </header>
     <main class="secondary-background">
-        <table class="grid">
+        <table class="grid" id="grid">
             <tr>
             <td></td>
             <td></td>

@@ -67,6 +67,14 @@
     border-color: var(--text-color);
 }
 
+.x-fill {
+  fill: var(--text-color);
+}
+
+.o-fill {
+  fill: var(--secondary-color);
+}
+
 body {
     height: 100vh;
     display: flex;
@@ -87,7 +95,11 @@ body {
   gap: 3rem
 }
 
-.player {
+.player-block__player-label {
+  padding-bottom: 0.5rem
+}
+
+.player-btn {
   width: 250px;
   max-height: 100px;
   display: flex;
@@ -99,24 +111,16 @@ body {
   border-radius: 8px;
 }
 
+.player-block__token-svg{
+  width: 50px;
+}
+
 .player-active {
   border-bottom: 5px solid var(--accent-color);
 }
 
 .player-inactive {
   border-bottom: none;
-}
-
-.player svg {
-  width: 50px;
-}
-
-.players__x svg {
-  fill: var(--text-color);
-}
-
-.players__o svg {
-  fill: var(--secondary-color);
 }
 
 main {
@@ -175,4 +179,3 @@ footer {
   color: var(--accent-color);
   font-size: 1.2rem;
 }
-
