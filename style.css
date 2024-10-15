@@ -52,19 +52,20 @@
     --text-color: #a0b2a2; /* Grey text */
     --secondary-color: #f5f5f5; /* White text */
     --accent-color:  #24aa96; /* Aquaish accent */
+    --btn-border-color: rgb(49, 51, 53);
+    font-family: Arial, Helvetica, sans-serif;
   }
 
-.dark-background {
+.primary-background {
     background-color: var(--background-color);
     color: var(--text-color);
 }
 
-.aqua-background {
+.secondary-background {
     background: var(--accent-color);
     color: var(--text-color);
     border-color: var(--text-color);
 }
-
 
 body {
     height: 100vh;
@@ -81,12 +82,12 @@ body {
 
   }
   
-.player-scores {
+.players {
   display: flex;
   gap: 3rem
 }
 
-.player-score {
+.player {
   width: 250px;
   max-height: 100px;
   display: flex;
@@ -94,12 +95,28 @@ body {
   align-items: center;
   gap: 5rem;
   border: 1px solid;
-  border-color: var(--text-color);
+  border-color: var(--btn-border-color);
   border-radius: 8px;
 }
 
-.player-score svg {
+.player-active {
+  border-bottom: 5px solid var(--accent-color);
+}
+
+.player-inactive {
+  border-bottom: none;
+}
+
+.player svg {
   width: 50px;
+}
+
+.players__x svg {
+  fill: var(--text-color);
+}
+
+.players__o svg {
+  fill: var(--secondary-color);
 }
 
 main {
@@ -151,5 +168,11 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.restart-btn {
+  border: none;
+  color: var(--accent-color);
+  font-size: 1.2rem;
 }
 
