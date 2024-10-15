@@ -9,7 +9,21 @@
 </head>
 <body>
     <header class="dark-background">
-        <div>Something</div>
+        <div class="player-scores">
+            <div class="player-scores__x player-score dark-background" id ="x-player-score">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="x-token">
+                    <path d="M9,7L11,12L9,17H11L12,14.5L13,17H15L13,12L15,7H13L12,9.5L11,7H9Z" />
+                </svg>
+                <p>-</p>
+            </div>
+            <div class="player-scores__o player-score dark-background" id ="o-player-score">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="o-token">
+                    <path d="M11,7A2,2 0 0,0 9,9V15A2,2 0 0,0 11,17H13A2,2 0 0,0 15,15V9A2,2 0 0,0 13,7H11M11,9H13V15H11V9Z" />
+                </svg>
+                <p>-</p>
+            </div>
+        </div>
+        <p class="turn-tracker" id="turn-tracker">Turn</p>
     </header>
     <main class="aqua-background">
         <table class="grid">
@@ -31,7 +45,7 @@
         </table>
     </main>
     <footer class="dark-background">
-        <div>something</div>
+        <button>Restart Game</button>
     </footer>      
 </body>
 </html>
