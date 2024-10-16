@@ -1,104 +1,18 @@
-function Cell() {
-    let cellValue = 0
-    const getValue = () => cellValue;
-    //Value is either X or O representing either player's symbol, or 0 for empty cell
-    const setValue = (value) => {
-        if(value === "X" || value === "O"){
-            cellValue = value; 
-        }
-    }
-    
-    return { 
-        getValue,
-        setValue
-    };
-}
+function Player(defaultToken) {
+    let token = defaultToken
 
-function Gameboard() {
-    const rows = 3;
-    const cols = 3;
-    const board = [];
-    
-    for(let i = 0; i < rows; i++){
-        board.push([])
-        for(let j = 0; j < cols; j++){
-            board[i].push(Cell())
-        }
-    }
+     // Counters for player's progress on rows, columns, and diagonals
+     const rowCounters = [0, 0, 0];
+     const colCounters = [0, 0, 0];
+     const diagCounters = [0, 0];  // diagCounters[0] = top-left to bottom-right, diagCounters[1] = top-right to bottom-left
 
-    const getRowCount = () => rows
+     let winCount = 0
 
-    const getColCount = () => cols
-    
-    const printBoard = function() {
-        let rowValues = []
-        console.group("Tic Tac Toe Board");
-        for(let row of board) {
-            for(cell of row) {
-                rowValues.push(cell.getValue())
-            }
-            console.log(rowValues.join("|"));
-            rowValues = []    
-        }
-        console.groupEnd();
-        console.log("\n"); //Seperate boards on multiple calls
-    }
+     const assignToken = (choice) => token = choice;
 
-    const updateBoard = (move, playerToken) => {
-        const row = move[0];
-        const col = move[1];
-        board[row][col].setValue(playerToken);
-    } 
+     const getToken = () => token;
 
-    const validateMove = (move) => {
-        const row = move[0];
-        const col = move[1];
-        return board[row][col].getValue() === 0;
-    }
-    
-
-    return {
-        printBoard,
-        updateBoard,
-        validateMove,
-        getRowCount,
-        getColCount,
-    }
-}
-
-function Player() {
-    
-    let name = '';
-    let token = '';
-
-    // Counters for player's progress on rows, columns, and diagonals
-    const rowCounters = [0, 0, 0];
-    const colCounters = [0, 0, 0];
-    const diagCounters = [0, 0];  // diagCounters[0] = top-left to bottom-right, diagCounters[1] = top-right to bottom-left
-
-    const setName = (input) => name = input; 
-
-    const getName = () => name;
-
-    const assignToken = (choice) => token = choice;
-
-    const chooseToken = function() {
-        let choice = ''
-        while(choice !== "X" && choice !== "O"){
-            choice = prompt(`${name}, choose X or O`);
-        }
-        return choice;
-    }
-    
-    const getToken = () => token;
-
-    const makeMove = function() {
-        let move = prompt(`${name} Make your move. Choose row and then column. Like 0,2 for middle right.`).split(",");
-        move = move.map(Number); //Convert string input from prompt into numbers
-        return move;
-    }
-
-    const updateCounters = (move) => {
+     const updateCounters = (move) => {
         const row = move[0];
         const col = move[1];
 
@@ -121,146 +35,180 @@ function Player() {
         return rowCounters[row] === 3 || colCounters[col] === 3 || diagCounters[0] === 3 || diagCounters[1] === 3;
     }
 
+    const increaseWinCount = () => {winCount++};
+
     return {
-        setName,
-        getName,
-        getToken,
         assignToken,
-        chooseToken,
-        makeMove,
+        getToken,
         updateCounters,
-        winCheck
+        winCheck,
+        increaseWinCount
+    }
+}
+
+function Cell() {
+    let cellValue = null
+
+    const getValue = () => cellValue;
+
+    //Value is either X or O representing either player's symbol, or null for empty cell
+    const setValue = (value) => {
+        if(value === "X" || value === "O"){
+            cellValue = value; 
+        }
+    }
+
+    return { 
+        getValue,
+        setValue
     };
 }
 
-function UIConroller() {
-    const setNameBlock = document.getElementById("set-name-block");
-    const p1Info = document.getElementById("p1-info");
-    const p2Info = document.getElementById("p2-info");
-    const gameContainer = document.getElementById("game-container");
-    
-    const createBoardGrid = function(rows, cols) {
-        for(let i = 0; i < rows; i++){
-            const rowDiv = document.createElement("div");
-            rowDiv.classList.add('row-div');
+function Gameboard() {
+    const rows = 3;
+    const cols = 3;
+    const board = [];
 
-            for(let j = 0; j < cols; j++){
-                const cellBtn = document.createElement("button");
-                cellBtn.classList.add("cell");
-                cellBtn.id = `cell-${i}-${j}`;
-                
-                rowDiv.appendChild(cellBtn);
-            }
-        gameContainer.appendChild(rowDiv);
-        }            
-    }
-
-    //Open a dialog
-    const openModal = function (dialog) {
-        dialog.showModal();
-    }
-
-    //Handle when user clicks outside of a dialog to close it
-    const handleOutsideClick = function(event, dialog) {
-        const dialogDimensions = dialog.getBoundingClientRect();
-        if (
-            event.clientX < dialogDimensions.left ||
-            event.clientX > dialogDimensions.right ||
-            event.clientY < dialogDimensions.top ||
-            event.clientY > dialogDimensions.bottom
-        ) {
-            dialog.close()
-        } 
-    }
-
-    const handleNameFormSubmit = function(event, dialog, player1, player2) {
-        event.preventDefault();
-
-        const p1NameInput = document.getElementById("p1-name-input");
-        const p2NameInput = document.getElementById("p2-name-input");
-
-        const p1Name = p1NameInput.value
-        const p2Name = p2NameInput.value
-
-        if(p1Name && p2Name) {
-            //If both values present when submitted, set both player names
-            player1.setName(p1Name);
-            player2.setName(p2Name);
-
-            //Log for testing purposes
-            console.log(`Player 1: ${player1.getName()}, Player 2: ${player2.getName()}`)
-
-            //Hide set-name-block in aside
-            setNameBlock.style.display = "none";
-
-            //Show player info in aside
-            p1Info.style.display = "block";
-            p2Info.style.display = "block";
-
-            //Close name dialog
-            dialog.close()
+    for(let i = 0; i < rows; i++){
+        board.push([])
+        for(let j = 0; j < cols; j++){
+            board[i].push(Cell())
         }
-
     }
 
-    const setUpNameModal = function(player1, player2) {
-        const nameDialog = document.getElementById("name-dialog");
-        const setNameBtn = document.getElementById("set-name-btn");
-        const nameForm = document.getElementById("name-form");
+    const printBoard = function() {
+        let rowValues = []
+        console.group("Tic Tac Toe Board");
+        for(let row of board) {
+            for(let cell of row) {
+                rowValues.push(cell.getValue())
+            }
+            console.log(rowValues.join("|"));
+            rowValues = []    
+        }
+        console.groupEnd();
+        console.log("\n"); //Seperate boards on multiple calls
+    }
 
-        // Add event listener to button that opens modal
-        setNameBtn.addEventListener("click", () => openModal(nameDialog));
+    const updateBoard = (move, playerToken) => {
+        const row = move[0];
+        const col = move[1];
+        board[row][col].setValue(playerToken);
+    } 
 
-        //Add event listener for closing module when clicking outside it
-        nameDialog.addEventListener("click", (event => handleOutsideClick(event, nameDialog)))
-
-        // Add event listener to handle form submission
-        nameForm.addEventListener("submit" , (event) => handleNameFormSubmit(event, nameDialog, player1, player2))
-
-        //Open the name dialog by default
-        nameDialog.showModal();
+    const validateMove = (move) => {
+        const row = move[0];
+        const col = move[1];
+        return board[row][col].getValue() === 0;
     }
 
     return {
-        createBoardGrid,
-        setUpNameModal
+        printBoard,
+        updateBoard,
+        validateMove,
     }
-} 
+}
+
+function UIController() {
+    const svgX = `
+    <svg fill="#a0b2a2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9,7L11,12L9,17H11L12,14.5L13,17H15L13,12L15,7H13L12,9.5L11,7H9Z" /></svg>
+    `
+    const svgO = `
+    <svg fill="#f5f5f5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11,7A2,2 0 0,0 9,9V15A2,2 0 0,0 11,17H13A2,2 0 0,0 15,15V9A2,2 0 0,0 13,7H11M11,9H13V15H11V9Z" /></svg>
+    `
+    //Cache DOM
+    const p1TokenSVG  = document.getElementById("p1-token-svg");
+    const p2TokenSVG  = document.getElementById("p2-token-svg");
+    const playerBtns = document.querySelectorAll(".player-btn");
+    const grid = document.getElementById("grid");    
+
+    renderPlayerTokens = function(player) {
+        const p1Token = player.getToken();
+
+        if(p1Token === "X") {   
+            p1TokenSVG.innerHTML = svgX;
+            p2TokenSVG.innerHTML = svgO;
+        }
+        else {
+            p1TokenSVG.innerHTML = svgO;
+            p2TokenSVG.innerHTML = svgX;
+        }
+    }
+
+    renderCellToken = function() {
+
+    }
+
+    renderCurrentPlayer = function() {
+
+    }
+
+    handleTokenSelect = function(players) {
+        const p1Token = players[0].getToken();
+
+        if (p1Token === "X") {
+            players[0].assignToken("O");
+            players[1].assignToken("X");
+        }
+        else {
+            players[0].assignToken("X");
+            players[1].assignToken("O");
+        }
+
+        renderPlayerTokens(players[0])
+    }
+
+    const bindPlayerBtns = function(players) {
+        for (btn of playerBtns) {
+            btn.addEventListener('click', () => handleTokenSelect(players));
+        }
+    }
+
+    const handleCellClick = function() {
+        console.log(this.id)
+
+    }
+
+    const bindCells = function() { 
+        for (row of grid.rows) {
+            for (cell of row.cells) {
+                cell.addEventListener('click', () => handleCellClick());
+            }
+        } 
+
+    }
+
+    return {
+        renderPlayerTokens,
+        bindPlayerBtns,
+        bindCells
+    }
+
+}
 
 function gameController() {
-    const toggleActivePlayer = () => {activePlayerIndex = (activePlayerIndex + 1) % 2} 
-
-    //Initialise gameboard and UI
+    //Initialise board and UI
     const board = Gameboard();
-    const ui = UIConroller();
-
-    //Create UI grid
-    const rows = board.getRowCount();
-    const cols = board.getColCount();
-    ui.createBoardGrid(rows, cols);
-
-    // Initialise players
-    const player1 = Player();
-    const player2 = Player();
+    const ui = UIController();
+    
+    //Initialise players
+    const player1 = Player('X')
+    const player2 = Player('O')
     const players = [player1, player2];
 
-    //set up name modal, modal logic and show it
-    ui.setUpNameModal(player1, player2); 
-    
-    //TODO set player names when user submits them
-    //Then hide set-name-block in DOM
-    //Show p1-info and p2-info in DOM
-    //Show token modal
+    //Render default tokens (Default is player '1' assigned X and player 2 assigned 'O')
+    ui.renderPlayerTokens(players[0]);
+
+    //bind token selection event to player buttons
+    ui.bindPlayerBtns(players);
+
+    //bind cell selection event to cells
+    ui.bindCells();
+
+
+    return {
+
+    }
 }
-    // player1.assignToken('X');
-    // player2.assignToken(player1.getToken() === "X" ? "O" : "X");
 
-    // console.log(`Player 1 has been assigned ${player1.getToken()}. Player 2 has been assigned ${player2.getToken()}.`)
-
-    
-    // let activePlayerIndex = 0
-    // let moveCounter = 0
-    
-gameController();
-
-
+let game = gameController();

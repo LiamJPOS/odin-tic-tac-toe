@@ -1,72 +1,181 @@
+/* CSS Reset */
+/*
+  1. Use a more-intuitive box-sizing model.
+*/
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+  /*
+    2. Remove default margin
+  */
+  * {
+    margin: 0;
+  }
+  /*
+    Typographic tweaks!
+    3. Add accessible line-height
+    4. Improve text rendering
+  */
+  body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  /*
+    5. Improve media defaults
+  */
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+  /*
+    6. Remove built-in form typography styles
+  */
+  input, button, textarea, select {
+    font: inherit;
+  }
+  /*
+    7. Avoid text overflows
+  */
+  p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+  }
+  /*
+    8. Create a root stacking context
+  */
+  #root, #__next {
+    isolation: isolate;
+  }
+
+
 :root {
-    --background-color: #f5f5f5;    /* Light gray background */
-    --primary-color: #1f78b4;       /* A cool blue for primary actions (like player X) */
-    --secondary-color: #33a02c;     /* A green for secondary actions (like player O) */
-    --accent-color: #ffb703;        /* A warm yellow for highlights or notifications */
-    --text-color: #333333;          /* Dark gray for main text */
-    --border-color: #dcdcdc;        /* Light border for grid lines */
-    --cell-hover-color: #e0e0e0;    /* Slightly darker hover effect for cells */
-    --message-color: #ffffff;       /* Color for the messages or status text */
-    --win-color: #fb5607;           /* Color to highlight a winning row/column/diagonal */
-    --header-background-color: #4682B4; /* Bold blue for the header */
-    --header-text-color: #ffffff; /* White text for contrast */
-    --accent-color: #f5a623; /* Optional accent color */
+    --background-color: #1e1e2f; /* Dark background */
+    --text-color: #a0b2a2; /* Grey text */
+    --secondary-color: #f5f5f5; /* White text */
+    --accent-color:  #24aa96; /* Aquaish accent */
+    --btn-border-color: rgb(49, 51, 53);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+.primary-background {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.secondary-background {
+    background: var(--accent-color);
+    color: var(--text-color);
+    border-color: var(--text-color);
+}
+
+.x-fill {
+  fill: var(--text-color);
+}
+
+.o-fill {
+  fill: var(--secondary-color);
 }
 
 body {
     height: 100vh;
-    margin: 0;
-    background-color: var(--background-color);
-    display: grid;
-    grid-template-areas: 
-        "header header header"
-        "aside main main";
+    display: flex;
+    flex-direction: column;
+  }
+  
+  header {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+  }
+  
+.players {
+  display: flex;
+  gap: 3rem
 }
 
-header {
-    grid-area: header;
-    margin: 0;
-    padding: 1rem;
-    margin-bottom: 3rem;
-    background-color: var(--header-background-color);
+.player-block__player-label {
+  padding-bottom: 0.5rem
 }
 
-aside {
-    grid-area: aside;
-    padding: 1rem;
+.player-btn {
+  width: 250px;
+  max-height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+  border: 1px solid;
+  border-color: var(--btn-border-color);
+  border-radius: 8px;
 }
 
-.p1-info, .p2-info {
-    display: none;
+.player-block__token-svg{
+  width: 50px;
+}
+
+.player-active {
+  border-bottom: 5px solid var(--accent-color);
+}
+
+.player-inactive {
+  border-bottom: none;
 }
 
 main {
-    grid-area: main;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+
+.grid {
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 1 / 1;
+    border-collapse: collapse;
+    border: none;
+}
+
+.grid td {
+    border: 10px solid;
+    padding: 0;
+    height: calc(100% / 3);
+    width: calc(100% / 3);
+}
+
+.grid td:hover {
+  background-color: #0f9e89;
+}
+
+.grid tr:first-child td {
+    border-top: none;
+  }
+  
+  .grid tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .grid tr td:first-child {
+    border-left: none;
+  }
+  
+  .grid tr td:last-child {
+    border-right: none;
+  }
+
+footer {
+    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.main__game-container {
-    width: 750px;
-    height: 750px;
-    border-style: solid;
-    border-width: 3px;
-    border-color: var(--border-color);
-    display: grid;
-}
-
-.row-div {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-}
-
-.cell {
-    border-style: solid;
-    border-width: 2px;
-    border-color: var(--border-color);
-}
-
-.cell:hover {
-    background-color: var(--cell-hover-color);
+.restart-btn {
+  border: none;
+  color: var(--accent-color);
+  font-size: 1.2rem;
 }
