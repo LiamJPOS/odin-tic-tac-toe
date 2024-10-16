@@ -119,9 +119,13 @@ function UIController() {
     //Cache DOM
     const p1TokenSVG  = document.getElementById("p1-token-svg")
     const p2TokenSVG  = document.getElementById("p2-token-svg")
+    const playerBtns = document.querySelectorAll(".player-btn")
+    
 
-    renderPlayerTokens = function(p1token) {
-        if(p1token === "X") {   
+    renderPlayerTokens = function(player) {
+        const p1Token = player.getToken();
+
+        if(p1Token === "X") {   
             p1TokenSVG.innerHTML = svgX;
             p2TokenSVG.innerHTML = svgO;
         }
@@ -129,11 +133,44 @@ function UIController() {
             p1TokenSVG.innerHTML = svgO;
             p2TokenSVG.innerHTML = svgX;
         }
+    }
+
+    renderCellToken = function() {
 
     }
 
+    renderCurrentPlayer = function() {
+
+    }
+
+    handleTokenSelect = function(players) {
+        const p1Token = players[0].getToken();
+
+        if (p1Token === "X") {
+            players[0].assignToken("O");
+            players[1].assignToken("X");
+        }
+        else {
+            players[0].assignToken("X");
+            players[1].assignToken("O");
+        }
+
+        renderPlayerTokens(players[0])
+    }
+
+    const bindPlayerBtns = function(players) {
+        for (btn of playerBtns) {
+            btn.addEventListener('click', () => handleTokenSelect(players));
+        }
+    }
+
+
+
+    
+
     return {
-        renderPlayerTokens
+        renderPlayerTokens,
+        bindPlayerBtns
     }
 
 
@@ -149,11 +186,18 @@ function gameController() {
     const player2 = Player('O')
     const players = [player1, player2];
 
-    //Render default tokens
-    ui.renderPlayerTokens(players[0].getToken())
+    //Render default tokens (Default is player '1' assigned X and player 2 assigned 'O')
+    ui.renderPlayerTokens(players[0]);
 
+    //User can switch tokens
+    ui.bindPlayerBtns(players);
+
+    //Or start playing
     
 
+    return {
+        players
+    }
 }
 
 let game = gameController();
