@@ -117,10 +117,10 @@ function UIController() {
     <svg fill="#f5f5f5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11,7A2,2 0 0,0 9,9V15A2,2 0 0,0 11,17H13A2,2 0 0,0 15,15V9A2,2 0 0,0 13,7H11M11,9H13V15H11V9Z" /></svg>
     `
     //Cache DOM
-    const p1TokenSVG  = document.getElementById("p1-token-svg")
-    const p2TokenSVG  = document.getElementById("p2-token-svg")
-    const playerBtns = document.querySelectorAll(".player-btn")
-    
+    const p1TokenSVG  = document.getElementById("p1-token-svg");
+    const p2TokenSVG  = document.getElementById("p2-token-svg");
+    const playerBtns = document.querySelectorAll(".player-btn");
+    const grid = document.getElementById("grid");    
 
     renderPlayerTokens = function(player) {
         const p1Token = player.getToken();
@@ -164,15 +164,25 @@ function UIController() {
         }
     }
 
+    const handleCellClick = function() {
+        console.log(this.id)
 
+    }
 
-    
+    const bindCells = function() { 
+        for (row of grid.rows) {
+            for (cell of row.cells) {
+                cell.addEventListener('click', () => handleCellClick());
+            }
+        } 
+
+    }
 
     return {
         renderPlayerTokens,
-        bindPlayerBtns
+        bindPlayerBtns,
+        bindCells
     }
-
 
 }
 
@@ -189,33 +199,16 @@ function gameController() {
     //Render default tokens (Default is player '1' assigned X and player 2 assigned 'O')
     ui.renderPlayerTokens(players[0]);
 
-    //User can switch tokens
+    //bind token selection event to player buttons
     ui.bindPlayerBtns(players);
 
-    //Or start playing
-    
+    //bind cell selection event to cells
+    ui.bindCells();
+
 
     return {
-        players
+
     }
 }
 
 let game = gameController();
-
-// const p1TokenSVG = document.getElementById("p1-token-svg");
-// const svgX = `
-// <svg fill="#a0b2a2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9,7L11,12L9,17H11L12,14.5L13,17H15L13,12L15,7H13L12,9.5L11,7H9Z" /></svg>
-// `
-// p1TokenSVG.innerHTML = svgX;
-
-
-// let grid = document.getElementById("grid")
-// let OToken = document.getElementById("o-token")
-// let gridRows = grid.rows
-// let row1 = gridRows[0].cells;
-// row1[0].style = "background: url(/images/alpha-o.svg)"
-// .rows method for a table and .cells method for a row. access with index as usual. 
-// Use background url to get x or o svg
-
-//When game is started unbind event on player score buttons
-//assign tokens based on values of player buttons
