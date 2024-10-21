@@ -109,23 +109,26 @@ function Gameboard() {
     }
 }
 
-function UIController() {
+//
+const EventController = function(players, gameboard) {
+    //Cache DOM
+    const p1TokenSVG  = document.getElementById("p1-token-svg");
+    const p2TokenSVG  = document.getElementById("p2-token-svg");
+    const playerBtns = document.querySelectorAll(".player-btn");
+    const cells = document.querySelectorAll(".cell")   
+    
+    //Images for X and O to use in DOM
     const svgX = `
     <svg fill="#a0b2a2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9,7L11,12L9,17H11L12,14.5L13,17H15L13,12L15,7H13L12,9.5L11,7H9Z" /></svg>
     `
     const svgO = `
     <svg fill="#f5f5f5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11,7A2,2 0 0,0 9,9V15A2,2 0 0,0 11,17H13A2,2 0 0,0 15,15V9A2,2 0 0,0 13,7H11M11,9H13V15H11V9Z" /></svg>
     `
-    //Cache DOM
-    const p1TokenSVG  = document.getElementById("p1-token-svg");
-    const p2TokenSVG  = document.getElementById("p2-token-svg");
-    const playerBtns = document.querySelectorAll(".player-btn");
-    const grid = document.getElementById("grid");    
+    //Functions to bind
+    const renderPlayerTokens = function() {
+        const p1Token = players[0].getToken();
 
-    renderPlayerTokens = function(player) {
-        const p1Token = player.getToken();
-
-        if(p1Token === "X") {   
+        if (p1Token === "X") {
             p1TokenSVG.innerHTML = svgX;
             p2TokenSVG.innerHTML = svgO;
         }
@@ -135,80 +138,63 @@ function UIController() {
         }
     }
 
-    renderCellToken = function() {
-
-    }
-
-    renderCurrentPlayer = function() {
-
-    }
-
-    handleTokenSelect = function(players) {
+    const assignTokens = function() {
         const p1Token = players[0].getToken();
 
+        console.log(`Player 1 token is ${p1Token}`)
+
         if (p1Token === "X") {
-            players[0].assignToken("O");
-            players[1].assignToken("X");
+            players[0].assignToken("O")
+            players[1].assignToken("X")
         }
         else {
-            players[0].assignToken("X");
-            players[1].assignToken("O");
+            players[0].assignToken("X")
+            players[1].assignToken("O")
         }
 
-        renderPlayerTokens(players[0])
+        console.log(`Player 1 token has changed to ${players[0].getToken()}`)
     }
 
-    const bindPlayerBtns = function(players) {
+    const renderCurrentPlayer = function() {
+
+    }
+
+    const unbindEvents = function () {   
         for (btn of playerBtns) {
-            btn.addEventListener('click', () => handleTokenSelect(players));
+            btn.removeEventListener("click", assignTokens)
+            btn.removeEventListener("click", renderPlayerTokens)
         }
     }
 
-    const handleCellClick = function() {
-        console.log(this.id)
 
+    //bind events
+    for (btn of playerBtns) {
+        btn.addEventListener("click", assignTokens)
+        btn.addEventListener("click", renderPlayerTokens)
     }
 
-    const bindCells = function() { 
-        for (row of grid.rows) {
-            for (cell of row.cells) {
-                cell.addEventListener('click', () => handleCellClick());
-            }
-        } 
 
+    for (cell of cells) {
+        cell.addEventListener("click", unbindEvents) //Once game starts don't need token select on player btns
     }
 
-    return {
-        renderPlayerTokens,
-        bindPlayerBtns,
-        bindCells
-    }
+
+    //Run default functions
+    renderPlayerTokens()
 
 }
 
-function gameController() {
-    //Initialise board and UI
-    const board = Gameboard();
-    const ui = UIController();
-    
+const Game = function () {
     //Initialise players
-    const player1 = Player('X')
-    const player2 = Player('O')
+    const player1 = Player("X");
+    const player2 = Player("O");
     const players = [player1, player2];
 
-    //Render default tokens (Default is player '1' assigned X and player 2 assigned 'O')
-    ui.renderPlayerTokens(players[0]);
+    //Initialise gameboard
+    const board = Gameboard();
 
-    //bind token selection event to player buttons
-    ui.bindPlayerBtns(players);
-
-    //bind cell selection event to cells
-    ui.bindCells();
-
-
-    return {
-
-    }
+    //Intialise events in DOM
+    const events = EventController(players, board);
 }
 
-let game = gameController();
+let game = Game();
