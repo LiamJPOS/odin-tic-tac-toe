@@ -99,7 +99,7 @@ function Gameboard() {
     const validateMove = (move) => {
         const row = move[0];
         const col = move[1];
-        return board[row][col].getValue() === 0;
+        return board[row][col].getValue() === null;
     }
 
     return {
@@ -110,12 +110,13 @@ function Gameboard() {
 }
 
 //
-const EventController = function(players, gameboard) {
+const EventController = function(players, board) {
     //Cache DOM
     const p1TokenSVG  = document.getElementById("p1-token-svg");
     const p2TokenSVG  = document.getElementById("p2-token-svg");
     const playerBtns = document.querySelectorAll(".player-btn");
     const turnTracker = document.getElementById("turn-tracker");
+    const grid = document.getElementById("grid")
     const cells = document.querySelectorAll(".cell");
     
     //Images for X and O to use in DOM
@@ -161,6 +162,31 @@ const EventController = function(players, gameboard) {
         }
     }
 
+    //Returns array of corresponding cell in grid
+    // const getUserMove = (evt) => {evt.target.id.split("-")}
+    const getUserMove = function(evt) {
+        return evt.currentTarget.id.split("-");
+    }
+
+    const shakeElement = function(element) {
+        element.classList.remove("shake");
+        element.offsetWidth;
+        element.classList.add("shake")
+    } 
+
+    const handleCellClick = function(evt) {
+        const move = getUserMove(evt);
+        if (board.validateMove(move)) {
+            board.updateBoard(move, activePlayerToken);
+            renderCellValue(evt);
+            toggleActivePlayer();
+            renderCurrentPlayer();
+        }
+        else {
+            shakeElement(grid)
+        }
+    }
+
     //Rendering functions
     const renderPlayerTokens = function() {
 
@@ -188,7 +214,7 @@ const EventController = function(players, gameboard) {
             tokenSVG = svgO;
         }
 
-        evt.target.innerHTML = tokenSVG;
+        evt.currentTarget.innerHTML = tokenSVG;
     }
 
     //bind events
@@ -199,9 +225,8 @@ const EventController = function(players, gameboard) {
 
     for (cell of cells) {
         cell.addEventListener("click", unbindEvents); //Once game starts don't need token select on player btns
-        cell.addEventListener("click", renderCellValue);
-        cell.addEventListener("click", toggleActivePlayer);
-        cell.addEventListener("click", renderCurrentPlayer);
+        cell.addEventListener("click", handleCellClick);
+
     }
 
     //Run default functions
