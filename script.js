@@ -176,12 +176,11 @@ const EventController = function(players, gameboard) {
 
     const renderCurrentPlayer = function() {
         turnTracker.textContent = `${activePlayerToken} make your move!`;
+        playerBtns[activePlayerIndex].classList.add("player-active");
+        playerBtns[1 - activePlayerIndex].classList.remove("player-active");
     }
 
     const renderCellValue = function(evt) {
-        // const token = players[activePlayerIndex].getToken()
-        // const token = activePlayerToken;
-
         if (activePlayerToken === "X") {
             tokenSVG = svgX;
         }

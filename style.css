@@ -109,6 +109,7 @@ body {
   border: 1px solid;
   border-color: var(--btn-border-color);
   border-radius: 8px;
+  border-bottom: none;
 }
 
 .player-block__token-svg{
@@ -119,9 +120,6 @@ body {
   border-bottom: 5px solid var(--accent-color);
 }
 
-.player-inactive {
-  border-bottom: none;
-}
 
 main {
     flex: 1;
