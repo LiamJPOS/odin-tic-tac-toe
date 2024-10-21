@@ -63,7 +63,6 @@ function Gameboard() {
         return boardTemplate;
     }
     
-
     return {
         printBoard,
         updateBoard,
