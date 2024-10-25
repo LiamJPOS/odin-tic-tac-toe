@@ -206,14 +206,21 @@ const EventController = function(players, board) {
        if (board.getMoveCounter() >= 5) {
         //fires after active player is toggled so need previous player
         const previous = 1 - activePlayerIndex;
+        board.printBoard()
 
         //If there is a winner
         if (players[previous].winCheck()) {
                 players[previous].increaseWinCount();
                 renderScore(previous);
+                renderRoundEnd();
                 renderWinner(players[previous]);
                 //TODO Reset board and render new board in UI with new functions on gameover screen
             }
+        //If there is a draw
+        if (board.getMoveCounter() === 9) {
+            renderRoundEnd();
+            renderDraw();
+        }
         }
     }
 
@@ -247,14 +254,24 @@ const EventController = function(players, board) {
         evt.currentTarget.innerHTML = tokenSVG;
     }
 
-    const renderWinner = function(player) {
-        const token = player.getToken();
+    const renderRoundEnd = function() {
         grid.hidden = true;
         gameOverScreen.style.display = "flex";
         turnTracker.textContent = "Round finished";
+    }
+
+    const renderWinner = function(player) {
+        const token = player.getToken();
         gameOverToken.innerHTML = token === "X" ? svgX : svgO;
+        gameOverToken.style.display = "block"
         gameOverMessage.textContent = "Win"
     }
+
+    const renderDraw = function() {
+        gameOverToken.style.display = "none"
+        gameOverMessage.textContent = "Draw"
+    }
+    
 
     const renderScore = (winnerIndex) => {scores[winnerIndex].textContent = players[winnerIndex].getWinCount()}
 
@@ -280,6 +297,7 @@ const EventController = function(players, board) {
     //Run default functions
     renderPlayerTokens();
 }
+
 
 const Game = function() {
 
