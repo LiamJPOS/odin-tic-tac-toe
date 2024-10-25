@@ -29,20 +29,20 @@ function Player(defaultToken) {
         }
     }
 
-    const winCheck = (move) => {
-        const row = move[0];
-        const col = move[1];
-        return rowCounters[row] === 3 || colCounters[col] === 3 || diagCounters[0] === 3 || diagCounters[1] === 3;
-    }
+    const winCheck = () => rowCounters.includes(3) || colCounters.includes(3) || diagCounters.includes(3);
 
     const increaseWinCount = () => {winCount++};
+
+    const getWinCount = () => winCount;
 
     return {
         assignToken,
         getToken,
         updateCounters,
         winCheck,
-        increaseWinCount
+        increaseWinCount,
+        getWinCount
+
     }
 }
 
@@ -68,13 +68,16 @@ function Gameboard() {
     const rows = 3;
     const cols = 3;
     const board = [];
-
+    
     for (let i = 0; i < rows; i++){
         board.push([])
         for(let j = 0; j < cols; j++){
             board[i].push(Cell())
         }
     }
+    
+    //Track moves made on the board
+    let moveCounter = 0;
 
     const printBoard = function() {
         let rowValues = []
@@ -102,10 +105,16 @@ function Gameboard() {
         return board[row][col].getValue() === null;
     }
 
+    const updateMoveCounter = () => {moveCounter++}
+
+    const getMoveCounter = () => moveCounter;
+
     return {
         printBoard,
         updateBoard,
         validateMove,
+        updateMoveCounter,
+        getMoveCounter
     }
 }
 
@@ -118,6 +127,10 @@ const EventController = function(players, board) {
     const turnTracker = document.getElementById("turn-tracker");
     const grid = document.getElementById("grid")
     const cells = document.querySelectorAll(".cell");
+    const scores = document.querySelectorAll(".score")
+    const gameOverScreen = document.getElementById("gameover-screen")
+    const gameOverToken = document.getElementById("gameover-token-div")
+    const gameOverMessage = document.getElementById("gameover-message")
     
     //Images for X and O to use in DOM
     const svgX = `
@@ -155,7 +168,7 @@ const EventController = function(players, board) {
         console.log(`player 1 is active player and is ${activePlayerToken}`)
     }
 
-    const unbindEvents = function() {   
+    const unbindBtnEvents = function() {   
         for (btn of playerBtns) {
             btn.removeEventListener("click", assignTokens);
             btn.removeEventListener("click", renderPlayerTokens);
@@ -178,12 +191,29 @@ const EventController = function(players, board) {
         const move = getUserMove(evt);
         if (board.validateMove(move)) {
             board.updateBoard(move, activePlayerToken);
+            board.updateMoveCounter();
             renderCellValue(evt);
+            players[activePlayerIndex].updateCounters(move);
             toggleActivePlayer();
             renderCurrentPlayer();
         }
         else {
             shakeElement(grid)
+        }
+    }
+
+    const handleWinner = function() {
+       if (board.getMoveCounter() >= 5) {
+        //fires after active player is toggled so need previous player
+        const previous = 1 - activePlayerIndex;
+
+        //If there is a winner
+        if (players[previous].winCheck()) {
+                players[previous].increaseWinCount();
+                renderScore(previous);
+                renderWinner(players[previous]);
+                //TODO Reset board and render new board in UI with new functions on gameover screen
+            }
         }
     }
 
@@ -217,6 +247,23 @@ const EventController = function(players, board) {
         evt.currentTarget.innerHTML = tokenSVG;
     }
 
+    const renderWinner = function(player) {
+        const token = player.getToken();
+        grid.hidden = true;
+        gameOverScreen.style.display = "flex";
+        turnTracker.textContent = "Round finished";
+        gameOverToken.innerHTML = token === "X" ? svgX : svgO;
+        gameOverMessage.textContent = "Win"
+    }
+
+    const renderScore = (winnerIndex) => {scores[winnerIndex].textContent = players[winnerIndex].getWinCount()}
+
+    const renderNewGrid = function () {
+        //TODO remove SVG from cells
+        grid.hidden = false;
+        gameOverScreen.display = "none";
+    }
+
     //bind events
     for (btn of playerBtns) {
         btn.addEventListener("click", assignTokens);
@@ -224,8 +271,9 @@ const EventController = function(players, board) {
     }
 
     for (cell of cells) {
-        cell.addEventListener("click", unbindEvents); //Once game starts don't need token select on player btns
+        cell.addEventListener("click", unbindBtnEvents); //Once game starts don't need token select on player btns
         cell.addEventListener("click", handleCellClick);
+        cell.addEventListener("click", handleWinner);
 
     }
 

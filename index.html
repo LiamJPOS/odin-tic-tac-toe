@@ -14,7 +14,7 @@
                 <p class="player-block__player-label">Player 1</p>
                 <button class="player-block__p1-btn player-btn player-active primary-background" id ="p1-player-btn">
                     <div class="player-block__token-svg" id="p1-token-svg"></div>
-                    <p id="p2-score">-</p>
+                    <p class="score" id="p1-score">-</p>
                 </button>
             </player-block>
             
@@ -22,7 +22,7 @@
                 <p class="player-block__player-label">Player 2</p>
                 <button class="player-block__p2-btn player-btn primary-background" id ="p2-player-btn">
                     <div class="player-block__token-svg" id="p2-token-svg"></div>
-                    <p id="p2-score">-</p>
+                    <p class="score" id="p2-score">-</p>
                 </button>
             </div>
         </div>
@@ -46,9 +46,16 @@
             <td class="cell" id="2-2"></td>
             </tr>
         </table>
+        <div class="gameover-screen gameover-colors" id="gameover-screen">
+            <div class="gameover-message">
+                <div class="gameover-message__token-svg" id="gameover-token-div"></div>
+                <h2 class="gameover-message__message" id="gameover-message">Gameover Message</h2>
+            </div>
+            <button class="gameover-screen__next-btn gameover-colors" id="soft-reset-btn">Next Round?</button>
+        </div>
     </main>
     <footer class="primary-background">
-        <button class="restart-btn primary-background">Restart Game</button>
+        <button class="restart-btn primary-background" id="hard-reset-btn">Restart Game</button>
     </footer>      
 </body>
 </html>
