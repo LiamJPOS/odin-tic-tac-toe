@@ -13,8 +13,10 @@ function Player(defaultToken) {
      const getToken = () => token;
 
      const updateCounters = (move) => {
-        const row = move[0];
-        const col = move[1];
+        const row = Number(move[0]);
+        const col = Number(move[1]);
+        console.log(`row ${row} and col ${col} selected`) //debugging
+        console.log(row + col)
 
         rowCounters[row]++;
         colCounters[col]++;
@@ -22,12 +24,13 @@ function Player(defaultToken) {
         //Check for diagonal line and update counters if needed
         if (row === col) {
             diagCounters[0]++;
-            console.log(diagCounters); //debugging
+            console.log("diagonal line 1 updated"); //debugging
+
         }
 
         if (row + col === 2) {
             diagCounters[1]++;
-            console.log(diagCounters); //debugging
+            console.log("diagonal line 2 updated"); //debugging
         }
     }
 
@@ -237,7 +240,6 @@ const EventController = function(players, board) {
        if (board.getMoveCounter() >= 5) {
         //fires after active player is toggled so need previous player
         const previous = 1 - activePlayerIndex;
-        board.printBoard()
 
         //If there is a winner
         if (players[previous].winCheck()) {
