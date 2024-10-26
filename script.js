@@ -2,9 +2,9 @@ function Player(defaultToken) {
     let token = defaultToken;
 
      // Counters for player's progress on rows, columns, and diagonals
-     const rowCounters = [0, 0, 0];
-     const colCounters = [0, 0, 0];
-     const diagCounters = [0, 0];  // diagCounters[0] = top-left to bottom-right, diagCounters[1] = top-right to bottom-left
+     let rowCounters = [0, 0, 0];
+     let colCounters = [0, 0, 0];
+     let diagCounters = [0, 0];  // diagCounters[0] = top-left to bottom-right, diagCounters[1] = top-right to bottom-left
 
      let winCount = 0;
 
@@ -22,11 +22,19 @@ function Player(defaultToken) {
         //Check for diagonal line and update counters if needed
         if (row === col) {
             diagCounters[0]++;
+            console.log(diagCounters); //debugging
         }
 
         if (row + col === 2) {
             diagCounters[1]++;
+            console.log(diagCounters); //debugging
         }
+    }
+
+    const resetCounters = () => {
+        rowCounters = [0, 0, 0];
+        colCounters = [0, 0, 0];
+        diagCounters = [0, 0]
     }
 
     const winCheck = () => rowCounters.includes(3) || colCounters.includes(3) || diagCounters.includes(3);
@@ -41,7 +49,8 @@ function Player(defaultToken) {
         updateCounters,
         winCheck,
         increaseWinCount,
-        getWinCount
+        getWinCount, 
+        resetCounters
 
     }
 }
@@ -58,9 +67,12 @@ function Cell() {
         }
     }
 
+    const resetValue = () => {cellValue = null};
+
     return { 
         getValue,
-        setValue
+        setValue,
+        resetValue
     }
 }
 
@@ -69,15 +81,17 @@ function Gameboard() {
     const cols = 3;
     const board = [];
     
-    for (let i = 0; i < rows; i++){
-        board.push([])
-        for(let j = 0; j < cols; j++){
-            board[i].push(Cell())
-        }
-    }
-    
     //Track moves made on the board
     let moveCounter = 0;
+
+    const newBoard = function() {
+        for (let i = 0; i < rows; i++){
+            board.push([])
+            for(let j = 0; j < cols; j++){
+                board[i].push(Cell())
+            }
+        }
+    }
 
     const printBoard = function() {
         let rowValues = []
@@ -109,12 +123,28 @@ function Gameboard() {
 
     const getMoveCounter = () => moveCounter;
 
+    const resetMoveCounter = () => {moveCounter = 0}
+
+    const resetBoard = function () {
+        for (let row of board) {
+            for (let cell of row) {
+                cell.resetValue()
+            }
+        }
+    }
+
+    //Default board when object intiialised
+    newBoard();
+
     return {
         printBoard,
         updateBoard,
         validateMove,
         updateMoveCounter,
-        getMoveCounter
+        getMoveCounter, 
+        resetMoveCounter, 
+        newBoard,
+        resetBoard
     }
 }
 
@@ -127,10 +157,11 @@ const EventController = function(players, board) {
     const turnTracker = document.getElementById("turn-tracker");
     const grid = document.getElementById("grid")
     const cells = document.querySelectorAll(".cell");
-    const scores = document.querySelectorAll(".score")
-    const gameOverScreen = document.getElementById("gameover-screen")
-    const gameOverToken = document.getElementById("gameover-token-div")
-    const gameOverMessage = document.getElementById("gameover-message")
+    const scores = document.querySelectorAll(".score");
+    const gameOverScreen = document.getElementById("gameover-screen");
+    const gameOverToken = document.getElementById("gameover-token-div");
+    const gameOverMessage = document.getElementById("gameover-message");
+    const softResetBtn = document.getElementById("soft-reset-btn");
     
     //Images for X and O to use in DOM
     const svgX = `
@@ -224,6 +255,13 @@ const EventController = function(players, board) {
         }
     }
 
+    const handleSoftReset = function() {
+        board.resetBoard();
+        for (player of players) {
+            player.resetCounters();
+        }
+    }
+
     //Rendering functions
     const renderPlayerTokens = function() {
 
@@ -272,13 +310,15 @@ const EventController = function(players, board) {
         gameOverMessage.textContent = "Draw"
     }
     
-
     const renderScore = (winnerIndex) => {scores[winnerIndex].textContent = players[winnerIndex].getWinCount()}
 
     const renderNewGrid = function () {
-        //TODO remove SVG from cells
         grid.hidden = false;
-        gameOverScreen.display = "none";
+        gameOverScreen.style.display = "none";
+        //Remove SVGs from grid
+        for (cell of cells) {
+            cell.innerHTML = '';
+        }
     }
 
     //bind events
@@ -293,6 +333,9 @@ const EventController = function(players, board) {
         cell.addEventListener("click", handleWinner);
 
     }
+
+    softResetBtn.addEventListener("click", renderNewGrid);
+    softResetBtn.addEventListener("click", handleSoftReset)
 
     //Run default functions
     renderPlayerTokens();
