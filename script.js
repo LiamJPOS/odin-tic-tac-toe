@@ -259,6 +259,7 @@ const EventController = function(players, board) {
 
     const handleSoftReset = function() {
         board.resetBoard();
+        board.resetMoveCounter()
         for (player of players) {
             player.resetCounters();
         }
