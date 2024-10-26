@@ -15,8 +15,6 @@ function Player(defaultToken) {
      const updateCounters = (move) => {
         const row = Number(move[0]);
         const col = Number(move[1]);
-        console.log(`row ${row} and col ${col} selected`) //debugging
-        console.log(row + col)
 
         rowCounters[row]++;
         colCounters[col]++;
@@ -24,13 +22,10 @@ function Player(defaultToken) {
         //Check for diagonal line and update counters if needed
         if (row === col) {
             diagCounters[0]++;
-            console.log("diagonal line 1 updated"); //debugging
-
         }
 
         if (row + col === 2) {
             diagCounters[1]++;
-            console.log("diagonal line 2 updated"); //debugging
         }
     }
 
@@ -46,6 +41,8 @@ function Player(defaultToken) {
 
     const getWinCount = () => winCount;
 
+    const resetWinCount = () => {winCount = 0};
+
     return {
         assignToken,
         getToken,
@@ -53,8 +50,8 @@ function Player(defaultToken) {
         winCheck,
         increaseWinCount,
         getWinCount, 
-        resetCounters
-
+        resetCounters,
+        resetWinCount
     }
 }
 
@@ -165,6 +162,7 @@ const EventController = function(players, board) {
     const gameOverToken = document.getElementById("gameover-token-div");
     const gameOverMessage = document.getElementById("gameover-message");
     const softResetBtn = document.getElementById("soft-reset-btn");
+    const hardResetBtn = document.getElementById("hard-reset-btn")
     
     //Images for X and O to use in DOM
     const svgX = `
@@ -196,10 +194,6 @@ const EventController = function(players, board) {
 
         //active player is always player 1 at this stage
         activePlayerToken = players[0].getToken()
-
-        //debugging statements
-        console.log(`Player 1 token has changed to ${players[0].getToken()}`);
-        console.log(`player 1 is active player and is ${activePlayerToken}`)
     }
 
     const unbindBtnEvents = function() {   
@@ -210,7 +204,6 @@ const EventController = function(players, board) {
     }
 
     //Returns array of corresponding cell in grid
-    // const getUserMove = (evt) => {evt.target.id.split("-")}
     const getUserMove = function(evt) {
         return evt.currentTarget.id.split("-");
     }
@@ -247,7 +240,6 @@ const EventController = function(players, board) {
                 renderScore(previous);
                 renderRoundEnd();
                 renderWinner(players[previous]);
-                //TODO Reset board and render new board in UI with new functions on gameover screen
             }
         //If there is a draw
         if (board.getMoveCounter() === 9) {
@@ -257,7 +249,7 @@ const EventController = function(players, board) {
         }
     }
 
-    const handleSoftReset = function() {
+    const newRound = function() {
         board.resetBoard();
         board.resetMoveCounter()
         for (player of players) {
@@ -265,6 +257,32 @@ const EventController = function(players, board) {
         }
     }
 
+    const handleHardReset = function() {
+        //Reset win counters
+        for (player of players) {
+            player.resetWinCount();
+        }
+        //Render scores as 0
+        for (let i = 0; i < 2; i++) {
+            renderScore(i)
+        }
+        //Rebind token selection events
+        for (btn of playerBtns) {
+            btn.addEventListener("click", assignTokens);
+            btn.addEventListener("click", renderPlayerTokens);
+        }
+        
+        //Reset player index and token
+        activePlayerIndex = 0;
+        activePlayerToken = "X"
+
+        //render current player
+        renderCurrentPlayer();
+
+        //Reset turn tracker message
+        turnTracker.textContent = "Start game or select token";
+    }
+    
     //Rendering functions
     const renderPlayerTokens = function() {
 
@@ -338,7 +356,11 @@ const EventController = function(players, board) {
     }
 
     softResetBtn.addEventListener("click", renderNewGrid);
-    softResetBtn.addEventListener("click", handleSoftReset)
+    softResetBtn.addEventListener("click", newRound);
+
+    hardResetBtn.addEventListener("click", renderNewGrid)
+    hardResetBtn.addEventListener("click", newRound)
+    hardResetBtn.addEventListener("click", handleHardReset)
 
     //Run default functions
     renderPlayerTokens();
