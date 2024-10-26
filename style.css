@@ -231,3 +231,8 @@ footer {
 .gameover-screen__next-btn:hover {
   cursor: pointer;
 }
+
+.restart-btn:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
